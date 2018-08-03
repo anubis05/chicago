@@ -1,0 +1,9 @@
+cron:
+- description: "call the samller dataset AKA Regions"
+  url: /smalldataset 
+  schedule: every 10 mins
+
+
+- description: "call the larger dataset AGA Segements"
+  url: /largedataset
+  schedule: every 10 mins  

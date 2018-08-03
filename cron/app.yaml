@@ -1,0 +1,13 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+env: standard
+
+handlers:
+   
+  - url: /smalldataset
+    script: main.app
+  - url: /largedataset
+    script: main.app  
+
+
