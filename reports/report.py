@@ -7,6 +7,7 @@ from smtplib import SMTPException
 from email.header import Header
 from email import encoders
 from email.MIMEMultipart import MIMEMultipart
+import os
 
 #Define what's the definition of bad traffic is 
 bad_traffic=15.0
@@ -22,7 +23,10 @@ client = bigquery.Client()
 dataset_id = 'chicago_historical_congestion_data'
 table_id = 'live_traffic'
 gmail_user="ganguly.sarthak@gmail.com"
-gmail_password="licoysmyhjrjbavm"
+#gmail_password="licoysmyhjrjbavm"
+print(os.environ['GMAIL_PASS'])
+gmail_password=os.environ['GMAIL_PASS']
+
 
 dataset_ref = client.dataset(dataset_id)
 table_ref = dataset_ref.table(table_id)
