@@ -79,13 +79,13 @@ with models.DAG(
 
     # [START composer_bigquery]
     # Query recent StackOverflow questions.
-    bq_get_final_results = bigquery_operator.BigQueryOperator(
-        task_id='bq_get_final_results',
-        bql="""
-          SELECT CURRENT_SPEED,REGION_ID,STREET FROM `{table}` LIMIT 1000  
-        """.format(table=bq_temp_composer_dataset),
-        use_legacy_sql=False,
-        destination_dataset_table=bq_composer_final_output)
+    #bq_get_final_results = bigquery_operator.BigQueryOperator(
+     #   task_id='bq_get_final_results',
+     #   bql="""
+     #     SELECT CURRENT_SPEED,REGION_ID,STREET FROM `{table}` LIMIT 1000  
+     #   """.format(table=bq_temp_composer_dataset),
+     #   use_legacy_sql=False,
+     #   destination_dataset_table=bq_composer_final_output)
     # [END composer_bigquery]
 
     # Export query result to Cloud Storage.
@@ -107,4 +107,4 @@ with models.DAG(
     # Define DAG dependencies.
     #(
         #make_bq_dataset
-    bq_fetch_todays_data >> bq_get_final_results >> export_output_to_gcs
+    bq_fetch_todays_data >> export_output_to_gcs
