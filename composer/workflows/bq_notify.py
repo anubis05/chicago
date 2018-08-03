@@ -18,7 +18,7 @@ from airflow.utils import trigger_rule
 
 
 #bq_dataset_name = 'airflow_bq_notify_dataset_{{ ds_nodash }}'
-bq_dataset_name = 'chicago_historical_congestion_data'
+bq_dataset_name = 'composer'
 bq_temp_composer_dataset = bq_dataset_name + '.table_exported_by_composer'
 output_file = 'gs://{gcs_bucket}/exported_from_bq.csv'.format(
     gcs_bucket=models.Variable.get('gcs_bucket'))
@@ -82,59 +82,16 @@ with models.DAG(
         destination_cloud_storage_uris=[output_file],
         export_format='CSV')
 
-    # Perform most popular question query.
-#    bq_most_popular_query = bigquery_operator.BigQueryOperator(
- #       task_id='bq_most_popular_question_query',
- #       bql="""
-  #      SELECT title, view_count
- #       FROM `{table}`
-  #      ORDER BY view_count DESC
-  #      LIMIT 1
-  #      """.format(table=bq_recent_questions_table_id),
-  #      use_legacy_sql=False,
-  #      destination_dataset_table=bq_most_popular_table_id)
 
-    # Read most popular question from BigQuery to XCom output.
-    # XCom is the best way to communicate between operators, but can only
-    # transfer small amounts of data. For passing large amounts of data, store
-    # the data in Cloud Storage and pass the path to the data if necessary.
-    # https://airflow.apache.org/concepts.html#xcoms
-   # bq_read_most_popular = bigquery_get_data.BigQueryGetDataOperator(
-   #     task_id='bq_read_most_popular',
-   #     dataset_id=bq_dataset_name,
-   #     table_id=BQ_MOST_POPULAR_TABLE_NAME)
-
-    # [START composer_email]
-    # Send email confirmation
-    #email_summary = email_operator.EmailOperator(
-     #   task_id='email_summary',
-     #   to=models.Variable.get('email'),
-     #   subject='Sample BigQuery notify data ready',
-     #   html_content="""
-     #   Analyzed Stack Overflow posts data from  12AM to 
-     #   12AM. The most popular question was someone with
-     #   views. Top 100 questions asked are now available at:.
-     #   """.format()
-    # [END composer_email]
 
     # Delete BigQuery dataset
     # Delete the bq table
-   # delete_bq_dataset = bash_operator.BashOperator(
-    #    task_id='delete_bq_dataset',
-    #    bash_command='bq rm -r -f %s' % bq_dataset_name,
+    delete_bq_dataset = bash_operator.BashOperator(
+        task_id='delete_bq_dataset',
+        bash_command='bq rm -r -f %s' % bq_dataset_name)
     #    trigger_rule=trigger_rule.TriggerRule.ALL_DONE)
 
     # Define DAG dependencies.
     #(
         #make_bq_dataset
-    bq_recent_questions_query >> export_questions_to_gcs #>> email_summary
-     #   >> delete_bq_dataset
-    #)
-    #(
-    #    bq_recent_questions_query
-    #    >> bq_most_popular_query
-    #    >> bq_read_most_popular
-    #    >> delete_bq_dataset
-    #)
-    #export_questions_to_gcs >> email_summary
-    #bq_read_most_popular >> email_summary
+    bq_recent_questions_query >> export_questions_to_gcs >> delete_bq_dataset
