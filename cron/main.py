@@ -35,8 +35,8 @@ class Smaller_dataset(webapp2.RequestHandler):
            response.raise_for_status()
 
 app = webapp2.WSGIApplication([
-    ('/smalldataset', MainPage),
-    ('/largedataset', Smaller_dataset),
+    ('/smalldataset', Smaller_dataset),
+    ('/largedataset', MainPage),
 ], debug=True)
 
 
