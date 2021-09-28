@@ -1,3 +1,9 @@
+# Calls the City of Chicago APIs and gets the data
+# This data is then published to a pubsub
+# This code was origially executed on appengine but obviously can be executed on
+# any other compute infra
+
+
 #!/usr/bin/env python
 
 #import webapp2
@@ -17,14 +23,18 @@ gcp_project= 'camel-154800'
 pubsub_name='big_ant'
 
 class myHandler(BaseHTTPRequestHandler):
+    
+    # Use the PubSub client to publish the data to Pub Sub
 
     def do_GET(self):
         publisher = pubsub_v1.PublisherClient()
         topic_path = publisher.topic_path(gcp_project, pubsub_name)
         
-        #Make the call to city Of Chicago to get the data
+        #Make the call to city Of Chicago API to get the data
+        
         response = requests.get(url)
-        #Check if the response is 200
+        #Check if the response is 200 which means the API executed successfully
+        
         if (response.ok):
                             full_message = response.json()
 
@@ -41,28 +51,31 @@ class myHandler(BaseHTTPRequestHandler):
                                 ORDERED_KEYS = ['_direction', '_fromst', '_last_updt','_length','_lif_lat','_lit_lat','_lit_lon','_strheading','_tost','_traffic','segmentid','start_lon','street']
                                 ordered_json = OrderedDict((k, message[k]) for k in ORDERED_KEYS)
                                 text=json.dumps(ordered_json)
-                                #text = r.content.decode(requests.utils.guess_json_utf(r.content)).encode('utf-8')
+                                
                                 print('The response is ready to be published. This is how it looks now:')
                                 print(text)
       		                
       		                
-                                   #Get a client and publish the message to the topic
+                                #Get a client and publish the message to the topic
 
-                                   # publisher = pubsub_v1.PublisherClient()
-                                   # topic_path = publisher.topic_path(gcp_project, pubsub_name)
+                                  
                                 publisher.publish(topic_path, data=text) 
       		                i += 1    
-                                self.send_response(200)
+                                self.send_response(200) # Setting HTTP status code to 200 indicating the API executed successfully
                                 self.send_header('Content-type','text/html')
                                 self.end_headers()
+                                
                                 # Send the html message
+                                
                                 self.wfile.write("we just posted objects to PubSub successfully. Total objects posted"+str(i))
-   		                print("We posted the messages successfully to PubSub")
+                                
+   		                        print("We posted the messages successfully to PubSub")
 	else :
 
    	     response.raise_for_status()  
 
 try:
+    
 #Create a web server and define the handler to manage the
 	#incoming request
 	server = HTTPServer(('', PORT_NUMBER), myHandler)

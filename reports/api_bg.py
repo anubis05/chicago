@@ -16,14 +16,18 @@ table_ref = dataset_ref.table(table_id)
 table = client.get_table(table_ref)  # API Request
 
 
-#This is just hello world to check the status
+#This is just hello world API call to check the status. If this returns welcome then 
+# it means the API is up and running
+
 @app.route('/')
 def api_root():
     return 'Welcome'
 
 
 
-# the query to receive regionId and send to BQ`
+# the query to receive regionId and send corresponding data from BQ`
+# The API will send back current speed of vehicles, when was it last updated and some other metadata to the caller
+
 @app.route('/regions', methods=['GET'])
 def api_article():
     

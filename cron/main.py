@@ -1,15 +1,15 @@
+# COuple of APIs which the cron job will trigger
+# There is one for the smallDataset which inturn will call the CityOfChicago small dataset API
+#And. the largeDataset which in turn will call the detailed dataset
+
+
+
 import webapp2
 import requests
 
 import socket
 
 socket.setdefaulttimeout(240)
-
-#class MainPage(webapp2.RequestHandler):
- #   def get(self):
-  #      self.response.headers['Content-Type'] = 'text/plain'
-  #      self.response.write('PONG')
-
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -19,8 +19,10 @@ class MainPage(webapp2.RequestHandler):
            self.response.headers['Content-Type'] = 'text/plain'
            self.response.write('successfully called the large dataset')
         else:
+            
   # If response code is not ok (200), print the resulting http error code with description
            response.raise_for_status()   
+
 
 
 class Smaller_dataset(webapp2.RequestHandler):
@@ -40,6 +42,3 @@ app = webapp2.WSGIApplication([
 ], debug=True)
 
 
-#app = webapp2.WSGIApplication([
- #   ('/ping', MainPage),
-#], debug=True)

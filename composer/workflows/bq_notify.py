@@ -1,3 +1,9 @@
+#DAGs are defined for Cloud COmposer AKA Apache Airflow. 
+# Ideally we want a series of activities to happen when we fetch the data, analyze the data and then
+# notify people about the data
+#This was never fully functional
+
+
 import datetime
 
 # [START composer_notify_failure]
@@ -31,6 +37,7 @@ output_file = 'gs://{gcs_bucket}/exported_from_bq.csv'.format(
 # macros can be useful for this. For example, {{ macros.ds_add(ds, -7) }}
 # corresponds to a date one week (7 days) before the DAG was run.
 # https://airflow.apache.org/code.html?highlight=execution_date#airflow.macros.ds_add
+
 max_query_date = '2018-02-01'
 min_query_date = '2018-01-01'
 
@@ -54,19 +61,7 @@ with models.DAG(
         'composer_sample_bq_notify',
         schedule_interval=datetime.timedelta(weeks=4),
         default_args=default_dag_args) as dag: 
-    # [END composer_notify_failure]
 
-    # [START composer_bash_bq]
-    # Create BigQuery output dataset.
-    #make_bq_dataset = bash_operator.BashOperator(
-     #   task_id='make_bq_dataset',
-        # Executing 'bq' command requires Google Cloud SDK which comes
-        # preinstalled in Cloud Composer.
-    #bash_command='bq ls {} || bq mk {}'.format(
-     #       bq_dataset_name, bq_dataset_name))
-    # [END composer_bash_bq]
-
-    # [START composer_bigquery]
     # Query recent today's data
     bq_fetch_todays_data = bigquery_operator.BigQueryOperator(
         task_id='bq_fetch_todays_data',
@@ -78,15 +73,7 @@ with models.DAG(
     # [END composer_bigquery]
 
     # [START composer_bigquery]
-    # Query recent StackOverflow questions.
-    #bq_get_final_results = bigquery_operator.BigQueryOperator(
-     #   task_id='bq_get_final_results',
-     #   bql="""
-     #     SELECT CURRENT_SPEED,REGION_ID,STREET FROM `{table}` LIMIT 1000  
-     #   """.format(table=bq_temp_composer_dataset),
-     #   use_legacy_sql=False,
-     #   destination_dataset_table=bq_composer_final_output)
-    # [END composer_bigquery]
+  
 
     # Export query result to Cloud Storage.
     export_output_to_gcs = bigquery_to_gcs.BigQueryToCloudStorageOperator(
@@ -99,12 +86,6 @@ with models.DAG(
 
     # Delete BigQuery dataset
     # Delete the bq table
-    #delete_bq_dataset = bash_operator.BashOperator(
-     #   task_id='delete_bq_dataset',
-     #   bash_command='bq rm -r -f -t %s' % bq_dataset_name)
-    #    trigger_rule=trigger_rule.TriggerRule.ALL_DONE)
 
-    # Define DAG dependencies.
-    #(
         #make_bq_dataset
     bq_fetch_todays_data >> export_output_to_gcs

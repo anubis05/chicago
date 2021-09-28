@@ -1,3 +1,10 @@
+# There are two data feeds, one which produces relatively small amount of data and triggered every minute or so via cron job
+# This code handles that file
+# There is another feed which has much larger data volume. That feed produces more details about each datapoints. The larger_data_publisher
+# contains the code to receive and parse that data and push it to a pubsub. The Larger dataset is received every 10 mins or so via another
+#cron job
+
+
 #!/usr/bin/env python
 
 #import webapp2
@@ -38,8 +45,11 @@ class myHandler(BaseHTTPRequestHandler):
         topic_path = publisher.topic_path(gcp_project, pubsub_name)
         
         #Make the call to city Of Chicago to get the data
+        
         response = requests.get(url)
+        
         #Check if the response is 200
+        
         if (response.ok):
                             full_message = response.json()
 
@@ -60,8 +70,7 @@ class myHandler(BaseHTTPRequestHandler):
       		                
                                    #Get a client and publish the message to the topic
 
-                                   # publisher = pubsub_v1.PublisherClient()
-                                   # topic_path = publisher.topic_path(gcp_project, pubsub_name)
+                                   
                                 publisher.publish(topic_path, data=text) 
       		                i += 1    
                                 self.send_response(200)
@@ -75,12 +84,14 @@ class myHandler(BaseHTTPRequestHandler):
    	     response.raise_for_status()  
 
 try:
+    
 #Create a web server and define the handler to manage the
 	#incoming request
+    
 	server = HTTPServer(('', PORT_NUMBER), myHandler)
 	print 'Started httpserver on port ' , PORT_NUMBER
 	
-	#Wait forever for incoming htto requests
+	#Wait forever for incoming http requests
 	server.serve_forever()
 
 except KeyboardInterrupt:
