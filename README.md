@@ -35,3 +35,13 @@ We also needed to further process the data to trigger events in case some thresh
 
 
 
+**Features not quite implemented**
+
+Data reprocessing. This is a secondary processing of the raw data to ensure original calculations were correct. This can be done on a weekly or monthly basis
+
+![TrigerringEvents](./supporting_assets/images/ReprocessingData.png)
+
+In real life there will be multiple feeds of data which needs to trigger various kinds of downstream system
+This can be done using Cloud composer aka Apache Airflow.
+
+![TrigerringEvents](./supporting_assets/images/Orchestration.png)
