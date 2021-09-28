@@ -1,0 +1,5 @@
+We want to use the data published by city of Chicago to create a realtime data pipeline which will show the traffic condition 
+by each road in near real time.
+There must be some dashboards to view the data as well as notifications must be triggered when certain thresholds are met.
+
+Source of data: https://data.cityofchicago.org/
