@@ -3,3 +3,6 @@ by each road in near real time.
 There must be some dashboards to view the data as well as notifications must be triggered when certain thresholds are met.
 
 Source of data: https://data.cityofchicago.org/
+
+
+![Data-Pipeline](Data-pipeline.png)
